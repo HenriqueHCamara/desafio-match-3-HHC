@@ -31,18 +31,23 @@ namespace Gazeus.DesafioMatch3.Controllers
         private bool _isLevelComplete = false;
         private int _currentLevelScore = 0;
 
+        public List<LevelData> GameLevelsData { get => _gameLevelsData; set => _gameLevelsData = value; }
+        public BoardView BoardView { get => _boardView; set => _boardView = value; }
+
         #region Unity
         private void Awake()
         {
             _gameEngine = new GameService();
             _gameEngine.onSpecialTileDeathEvent += TakeALifeFromPlayer;
-            _boardView.TileClicked += OnTileClick;
+            if (_boardView)
+                _boardView.TileClicked += OnTileClick;
         }
 
         private void OnDestroy()
         {
             _gameEngine.onSpecialTileDeathEvent -= TakeALifeFromPlayer;
-            _boardView.TileClicked -= OnTileClick;
+            if (_boardView)
+                _boardView.TileClicked -= OnTileClick;
         }
 
         private void Start()
@@ -53,14 +58,17 @@ namespace Gazeus.DesafioMatch3.Controllers
 
         private void StartNewLevel()
         {
-            SetLevelInfo(_currentLevelIndexer);
-            _boardHeight = _gameLevelsData[_currentLevelIndexer].LevelBoardSize;
-            _boardWidth = _gameLevelsData[_currentLevelIndexer].LevelBoardSize;
-            _remainingMovements = _gameLevelsData[_currentLevelIndexer].LevelMaxMovements;
-            _isLevelComplete = false;
-            List<List<Tile>> board = _gameEngine.StartGame(_gameLevelsData[_currentLevelIndexer]);
-            _boardView.CreateBoard(board);
-            hintCoroutine = StartCoroutine(GiveMovementHint());
+            if (_gameLevelsData.Count > 0)
+            {
+                SetLevelInfo(_currentLevelIndexer);
+                _boardHeight = _gameLevelsData[_currentLevelIndexer].LevelBoardSize;
+                _boardWidth = _gameLevelsData[_currentLevelIndexer].LevelBoardSize;
+                _remainingMovements = _gameLevelsData[_currentLevelIndexer].LevelMaxMovements;
+                _isLevelComplete = false;
+                List<List<Tile>> board = _gameEngine.StartGame(_gameLevelsData[_currentLevelIndexer]);
+                _boardView.CreateBoard(board);
+                hintCoroutine = StartCoroutine(GiveMovementHint());
+            }
         }
 
         private void AnimateBoard(List<BoardSequence> boardSequences, int index, Action onComplete)
@@ -76,7 +84,7 @@ namespace Gazeus.DesafioMatch3.Controllers
 
             _playerData.CurrentPlayerScore += boardSequence.MatchedPosition.Count; // We add the score to the player data.
             _currentLevelScore += boardSequence.MatchedPosition.Count; // We add the score to the level current score
-            _gameInfoView.UpdateTargetScore(_currentLevelScore, _gameLevelsData[_currentLevelIndexer].LevelTargetPoints); // We update the UI to show the player how much progress he made in this turn.
+            if (_gameInfoView) _gameInfoView.UpdateTargetScore(_currentLevelScore, _gameLevelsData[_currentLevelIndexer].LevelTargetPoints); // We update the UI to show the player how much progress he made in this turn.
 
             OnTileSwapAddpointsCounter(); // For the player total points made during the Swaping Round,
                                           // we add points based on the number of matched tiles,
@@ -104,7 +112,7 @@ namespace Gazeus.DesafioMatch3.Controllers
             sequence.onComplete += () => onComplete();
         }
 
-        private void OnTileClick(int x, int y)
+        public void OnTileClick(int x, int y)
         {
             if (_isAnimating) return;
 
@@ -131,7 +139,7 @@ namespace Gazeus.DesafioMatch3.Controllers
                             }
 
                             _remainingMovements--; // if it is a valid movement, we decrease the remaining movements the player can make.
-                            _gameInfoView.UpdateMovements(_remainingMovements);
+                            if (_gameInfoView) _gameInfoView.UpdateMovements(_remainingMovements);
 
                             List<BoardSequence> swapResult = _gameEngine.SwapTile(_selectedX, _selectedY, x, y);
                             AnimateBoard(swapResult, 0, () =>
@@ -196,8 +204,11 @@ namespace Gazeus.DesafioMatch3.Controllers
                 _currentLevelIndexer = 0;
                 _currentLevelScore = 0;
                 _playerData.ResetPlayerData();
-                _gameInfoView.UpdatePlayerLives();
-                _gameInfoView.UpdatePlayerScore();
+                if (_gameInfoView)
+                {
+                    _gameInfoView.UpdatePlayerLives();
+                    _gameInfoView.UpdatePlayerScore();
+                }
                 StartNewLevel();
             });
 
@@ -216,7 +227,7 @@ namespace Gazeus.DesafioMatch3.Controllers
                 _boardView.DestroyBoard(_gameLevelsData[_currentLevelIndexer].LevelBoardSize);
                 _currentLevelIndexer++;
                 if (_currentLevelIndexer >= _gameLevelsData.Count)
-                    _gameLevelsData.Add(generateRandomLevel()); // If there are no more premade levels, we generate a new one.
+                    _gameLevelsData.Add(GenerateRandomLevel()); // If there are no more premade levels, we generate a new one.
 
                 if (_playerData.CurrentPlayerLives == 0) // if the player lost a live in his last move, but concluded the level, we give him a life as a gift
                     _playerData.CurrentPlayerLives++;
@@ -230,7 +241,7 @@ namespace Gazeus.DesafioMatch3.Controllers
         /// Creates a new level data SO with randomized parameters.
         /// </summary>
         /// <returns> The new randomized level data </returns>
-        private LevelData generateRandomLevel()
+        public LevelData GenerateRandomLevel()
         {
             LevelData newGeneratedLevel = ScriptableObject.CreateInstance<LevelData>();
 
@@ -314,7 +325,7 @@ namespace Gazeus.DesafioMatch3.Controllers
 
             // If there are no valid movements, the game soft-locked, so we give it as a win to the player and we go to the next level
             _playerData.CurrentPlayerScore += _gameLevelsData[_currentLevelIndexer].LevelTargetPoints - _currentLevelScore; // we give the player the remaining level points
-            _gameInfoView.UpdatePlayerScore();
+            if (_gameInfoView) _gameInfoView.UpdatePlayerScore();
             SetupGameForNextLevel(); // and we go to the next level
             return null;
         }
@@ -325,7 +336,7 @@ namespace Gazeus.DesafioMatch3.Controllers
         /// </summary>
         private void OnTileSwapAddpointsCounter()
         {
-            _gameInfoView.UpdatePlayerScore();
+            if (_gameInfoView) _gameInfoView.UpdatePlayerScore();
         }
 
         /// <summary>
@@ -334,7 +345,7 @@ namespace Gazeus.DesafioMatch3.Controllers
         private void TakeALifeFromPlayer()
         {
             _playerData.CurrentPlayerLives -= 1;
-            _gameInfoView.UpdatePlayerLives();
+            if (_gameInfoView) _gameInfoView.UpdatePlayerLives();
         }
 
         /// <summary>
@@ -343,14 +354,17 @@ namespace Gazeus.DesafioMatch3.Controllers
         /// <param name="levelIndex"> The level index, wich comes from the order of the level list </param>
         private void SetLevelInfo(int levelIndex)
         {
-            _gameInfoView.SetLevelInfo(_gameLevelsData[levelIndex], levelIndex);
+            if (_gameInfoView) _gameInfoView.SetLevelInfo(_gameLevelsData[levelIndex], levelIndex);
         }
 
         private void OnApplicationQuit()
         {
-            if (_playerData.CurrentPlayerScore > _playerData.PlayerLeaderboardScore) // We save the player score to a file if he exits the game
+            if (_playerData)
             {
-                SaveSystem.SaveHighScore(_playerData.CurrentPlayerScore);
+                if (_playerData.CurrentPlayerScore > _playerData.PlayerLeaderboardScore) // We save the player score to a file if he exits the game
+                {
+                    SaveSystem.SaveHighScore(_playerData.CurrentPlayerScore);
+                }
             }
         }
     }

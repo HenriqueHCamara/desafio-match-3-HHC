@@ -18,7 +18,7 @@ namespace Gazeus.DesafioMatch3.Views
         #region Unity
         private void Awake()
         {
-            _button.onClick.AddListener(OnTileClick);
+           if(_button) _button.onClick.AddListener(OnTileClick);
         }
         #endregion
 

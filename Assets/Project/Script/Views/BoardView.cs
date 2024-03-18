@@ -21,6 +21,11 @@ namespace Gazeus.DesafioMatch3.Views
         private GameObject[][] _tiles;
         private TileSpotView[][] _tileSpots;
         private List<Animator> _hintAnimators = new List<Animator>();
+
+        public GridLayoutGroup BoardContainer { get => _boardContainer; set => _boardContainer = value; }
+        public TilePrefabRepository TilePrefabRepository { get => _tilePrefabRepository; set => _tilePrefabRepository = value; }
+        public TileSpotView TileSpotPrefab { get => _tileSpotPrefab; set => _tileSpotPrefab = value; }
+
         public void CreateBoard(List<List<Tile>> board)
         {
             _boardContainer.constraintCount = board[0].Count;
@@ -46,7 +51,8 @@ namespace Gazeus.DesafioMatch3.Views
                     {
                         GameObject tilePrefab = _tilePrefabRepository.TileTypePrefabList[tileTypeIndex];
                         GameObject tile = Instantiate(tilePrefab);
-                        tile.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = _tilePrefabRepository.TileSpecialImagePrefabList[(int)board[y][x].Action]; // If the Tile has an Special Action, we give it the aprropriate sprite.
+                        if (tile.transform.childCount > 0)
+                            tile.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = _tilePrefabRepository.TileSpecialImagePrefabList[(int)board[y][x].Action]; // If the Tile has an Special Action, we give it the aprropriate sprite.
                         tileSpot.SetTile(tile);
 
                         _tiles[y][x] = tile;
@@ -63,7 +69,7 @@ namespace Gazeus.DesafioMatch3.Views
                 {
                     TileSpotView tileSpot = _tileSpots[y][x];
 
-                    Destroy(tileSpot.gameObject);                     
+                    Destroy(tileSpot.gameObject);
                     _tileSpots[y][x] = null;
                 }
             }
