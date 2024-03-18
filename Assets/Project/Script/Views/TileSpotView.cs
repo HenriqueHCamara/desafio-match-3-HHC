@@ -10,6 +10,7 @@ namespace Gazeus.DesafioMatch3.Views
         public event Action<int, int> Clicked;
 
         [SerializeField] private Button _button;
+        [SerializeField] AudioSource _clickAudio;
 
         private int _x;
         private int _y;
@@ -43,6 +44,7 @@ namespace Gazeus.DesafioMatch3.Views
 
         private void OnTileClick()
         {
+            _clickAudio.Play();
             Clicked?.Invoke(_x, _y);
         }
     }

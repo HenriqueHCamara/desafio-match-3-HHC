@@ -6,5 +6,6 @@ namespace Gazeus.DesafioMatch3.Models
     {
         public Vector2Int Position { get; set; }
         public int Type { get; set; }
+        public TileSpecialAction SpecialAction { get; set; }
     }
 }

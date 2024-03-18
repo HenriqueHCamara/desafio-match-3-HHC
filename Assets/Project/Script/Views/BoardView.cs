@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Gazeus.DesafioMatch3.Models;
 using Gazeus.DesafioMatch3.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace Gazeus.DesafioMatch3.Views
 {
@@ -18,7 +20,7 @@ namespace Gazeus.DesafioMatch3.Views
 
         private GameObject[][] _tiles;
         private TileSpotView[][] _tileSpots;
-
+        private List<Animator> _hintAnimators = new List<Animator>();
         public void CreateBoard(List<List<Tile>> board)
         {
             _boardContainer.constraintCount = board[0].Count;
@@ -44,10 +46,25 @@ namespace Gazeus.DesafioMatch3.Views
                     {
                         GameObject tilePrefab = _tilePrefabRepository.TileTypePrefabList[tileTypeIndex];
                         GameObject tile = Instantiate(tilePrefab);
+                        tile.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = _tilePrefabRepository.TileSpecialImagePrefabList[(int)board[y][x].Action]; // If the Tile has an Special Action, we give it the aprropriate sprite.
                         tileSpot.SetTile(tile);
 
                         _tiles[y][x] = tile;
                     }
+                }
+            }
+        }
+
+        public void DestroyBoard(int boardSize)
+        {
+            for (int y = 0; y < boardSize; y++)
+            {
+                for (int x = 0; x < boardSize; x++)
+                {
+                    TileSpotView tileSpot = _tileSpots[y][x];
+
+                    Destroy(tileSpot.gameObject);                     
+                    _tileSpots[y][x] = null;
                 }
             }
         }
@@ -64,6 +81,8 @@ namespace Gazeus.DesafioMatch3.Views
 
                 GameObject tilePrefab = _tilePrefabRepository.TileTypePrefabList[addedTileInfo.Type];
                 GameObject tile = Instantiate(tilePrefab);
+                tile.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = _tilePrefabRepository.TileSpecialImagePrefabList[(int)addedTileInfo.SpecialAction];
+
                 tileSpot.SetTile(tile);
 
                 _tiles[position.y][position.x] = tile;
@@ -77,11 +96,21 @@ namespace Gazeus.DesafioMatch3.Views
 
         public Tween DestroyTiles(List<Vector2Int> matchedPosition)
         {
+            Sequence sequence = DOTween.Sequence();
+
             for (int i = 0; i < matchedPosition.Count; i++)
             {
                 Vector2Int position = matchedPosition[i];
-                Destroy(_tiles[position.y][position.x]);
+                _tileSpots[position.y][position.x].transform.GetChild(0).GetComponent<Animator>().SetTrigger("Explode");
+
+                _tiles[position.y][position.x].transform.localScale = Vector2.one;
+                GameObject tileToDestroy = _tiles[position.y][position.x];
+                sequence.Join(_tiles[position.y][position.x].transform.DOScale(0.0f, 0.2f).OnComplete(() =>
+                {
+                    Destroy(tileToDestroy);
+                }));
                 _tiles[position.y][position.x] = null;
+
             }
 
             return DOVirtual.DelayedCall(0.2f, () => { });
@@ -126,6 +155,37 @@ namespace Gazeus.DesafioMatch3.Views
             (_tiles[toY][toX], _tiles[fromY][fromX]) = (_tiles[fromY][fromX], _tiles[toY][toX]);
 
             return sequence;
+        }
+
+        /// <summary>
+        /// Plays a Hint animation on the tile spot child object
+        /// </summary>
+        /// <param name="positions"> A vector containing the two tiles positions, the checked tile and the pair tile </param>
+        public void AnimateHint(int[] positions)
+        {
+            if (positions != null)
+            {
+                Animator checkedTile = _tileSpots[positions[0]][positions[1]].transform.GetChild(0).GetComponent<Animator>();
+                checkedTile.Play("Base Layer.HintAnim", 0);
+                _hintAnimators.Add(checkedTile);
+
+                Animator swapPairTile = _tileSpots[positions[2]][positions[3]].transform.GetChild(0).GetComponent<Animator>();
+                swapPairTile.Play("Base Layer.HintAnim", 0);
+                _hintAnimators.Add(swapPairTile);
+            }
+        }
+
+        /// <summary>
+        /// We set the animator of each tile that had it's hint animation playing to the idle animation
+        /// </summary>
+        public void StopHintAnimation()
+        {
+            foreach (var item in _hintAnimators)
+            {
+                item.Play("Base Layer.Idle", 0);
+            }
+
+            _hintAnimators.Clear();
         }
 
         #region Events

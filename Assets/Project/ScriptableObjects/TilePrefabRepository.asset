@@ -20,3 +20,9 @@ MonoBehaviour:
   - {fileID: 8811796958392367493, guid: dbb3cd93728abaa43a394a4320380812, type: 3}
   - {fileID: 3248726331797900192, guid: 90b6f1c7b50730c47ba7294b1f2bbbd4, type: 3}
   - {fileID: 5683098699188789233, guid: 21d43d9bcb34c784aba98010c0ad6084, type: 3}
+  _tileSpecialImagePrefabList:
+  - {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 21300000, guid: fdbbca5df2770b64e9fc6ca2e61de3eb, type: 3}
+  - {fileID: 21300000, guid: 8c41006cfe495064a9101b2779762907, type: 3}
+  - {fileID: 21300000, guid: 781a766e641df9b46826e6b084d84634, type: 3}
+  - {fileID: 21300000, guid: 5e82e6ecd542a574ea27c79fc79b0ca0, type: 3}
