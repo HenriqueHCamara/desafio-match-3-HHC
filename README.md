@@ -1,3 +1,5 @@
+Link para o download do jogo no Itch.io: https://misterzedman.itch.io/gmatch3
+
 Features:
 - Pontuação com Highscore salvo entre jogos.
     - Ao sair ou perder o jogo, é salvo persistente seu HighScore.
