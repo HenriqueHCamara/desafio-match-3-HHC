@@ -17,11 +17,11 @@ namespace Gazeus.DesafioMatch3.Core
 
         private int _SpecialPowerupChance = 46; // The chance for special Tiles to appear
         private LevelData _currentLevelData;
-        private List<List<bool>> _matchedSpecialTilesPosition = new List<List<bool>>();
+        private List<List<bool>> _matchedTilesPosition = new List<List<bool>>();
 
         public List<List<Tile>> BoardTiles { get => _boardTiles; set => _boardTiles = value; }
         public TileSpecialAction SpecialActionToExecute { get => _specialActionToExecute; set => _specialActionToExecute = value; }
-        public List<List<bool>> MatchedSpecialTilesPosition { get => _matchedSpecialTilesPosition; set => _matchedSpecialTilesPosition = value; }
+        public List<List<bool>> MatchedTilesPosition { get => _matchedTilesPosition; set => _matchedTilesPosition = value; }
 
         public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
         {
@@ -181,10 +181,10 @@ namespace Gazeus.DesafioMatch3.Core
                         break;
                 }
 
-                MatchedSpecialTilesPosition = matchedTiles;
-
                 _specialActionToExecute = TileSpecialAction.None;
             }
+
+            MatchedTilesPosition = matchedTiles;
 
             while (HasMatch(matchedTiles))
             {
@@ -369,7 +369,7 @@ namespace Gazeus.DesafioMatch3.Core
                                 noMatchTypes.Remove(board[y - 2][x].Type);
                             }
                             break;
-                        case LevelMechanic.MatchSquared:                     
+                        case LevelMechanic.MatchSquared:
                             if (x > 0 && y > 0 &&
                                 board[y][x - 1].Type == board[y - 1][x].Type
                                 )

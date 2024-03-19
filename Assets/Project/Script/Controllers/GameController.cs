@@ -36,6 +36,7 @@ namespace Gazeus.DesafioMatch3.Controllers
         public GameService GameEngine { get => _gameEngine; set => _gameEngine = value; }
         public PlayerData PlayerData { get => _playerData; set => _playerData = value; }
         public bool IsAnimating { get => _isAnimating; set => _isAnimating = value; }
+        public bool IsLevelComplete { get => _isLevelComplete; set => _isLevelComplete = value; }
 
         #region Unity
         private void Awake()
@@ -67,9 +68,9 @@ namespace Gazeus.DesafioMatch3.Controllers
                 _boardHeight = _gameLevelsData[_currentLevelIndexer].LevelBoardSize;
                 _boardWidth = _gameLevelsData[_currentLevelIndexer].LevelBoardSize;
                 _remainingMovements = _gameLevelsData[_currentLevelIndexer].LevelMaxMovements;
-                _isLevelComplete = false;
                 List<List<Tile>> board = _gameEngine.StartGame(_gameLevelsData[_currentLevelIndexer]);
                 _boardView.CreateBoard(board);
+                _isLevelComplete = false;
                 hintCoroutine = StartCoroutine(GiveMovementHint());
             }
         }
@@ -220,7 +221,7 @@ namespace Gazeus.DesafioMatch3.Controllers
         /// <summary>
         /// We clean the board and load the next level
         /// </summary>
-        private void SetupGameForNextLevel()
+        public void SetupGameForNextLevel()
         {
             _isLevelComplete = true;
             BoardSequence destroySequence = _gameEngine.ClearBoard();
