@@ -25,8 +25,6 @@ namespace Gazeus.DesafioMatch3.Views
         public GridLayoutGroup BoardContainer { get => _boardContainer; set => _boardContainer = value; }
         public TilePrefabRepository TilePrefabRepository { get => _tilePrefabRepository; set => _tilePrefabRepository = value; }
         public TileSpotView TileSpotPrefab { get => _tileSpotPrefab; set => _tileSpotPrefab = value; }
-        public GameObject[][] Tiles { get => _tiles; set => _tiles = value; }
-        public TileSpotView[][] TileSpots { get => _tileSpots; set => _tileSpots = value; }
 
         public void CreateBoard(List<List<Tile>> board)
         {

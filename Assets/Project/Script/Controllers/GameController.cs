@@ -35,8 +35,8 @@ namespace Gazeus.DesafioMatch3.Controllers
         public BoardView BoardView { get => _boardView; set => _boardView = value; }
         public GameService GameEngine { get => _gameEngine; set => _gameEngine = value; }
         public PlayerData PlayerData { get => _playerData; set => _playerData = value; }
-        public bool IsAnimating { get => _isAnimating; set => _isAnimating = value; }
-        public bool IsLevelComplete { get => _isLevelComplete; set => _isLevelComplete = value; }
+        public bool IsAnimating { get => _isAnimating; }
+        public bool IsLevelComplete { get => _isLevelComplete; }
 
         #region Unity
         private void Awake()

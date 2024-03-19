@@ -19,10 +19,9 @@ namespace Gazeus.DesafioMatch3.Core
         private LevelData _currentLevelData;
         private List<List<bool>> _matchedTilesPosition = new List<List<bool>>();
 
-        public List<List<Tile>> BoardTiles { get => _boardTiles; set => _boardTiles = value; }
-        public TileSpecialAction SpecialActionToExecute { get => _specialActionToExecute; set => _specialActionToExecute = value; }
-        public List<List<bool>> MatchedTilesPosition { get => _matchedTilesPosition; set => _matchedTilesPosition = value; }
-        public LevelData CurrentLevelData { get => _currentLevelData; set => _currentLevelData = value; }
+        public List<List<Tile>> BoardTiles { get => _boardTiles; }
+        public List<List<bool>> MatchedTilesPosition { get => _matchedTilesPosition; }
+        public LevelData CurrentLevelData { get => _currentLevelData; }
 
         public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
         {
@@ -185,7 +184,7 @@ namespace Gazeus.DesafioMatch3.Core
                 _specialActionToExecute = TileSpecialAction.None;
             }
 
-            MatchedTilesPosition = matchedTiles;
+            _matchedTilesPosition = matchedTiles;
 
             while (HasMatch(matchedTiles))
             {
