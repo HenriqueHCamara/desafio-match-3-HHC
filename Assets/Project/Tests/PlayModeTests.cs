@@ -286,5 +286,54 @@ namespace Gazeus.DesafioMatch3.Test
 
             Assert.IsTrue(matches >= 4);
         }
+
+        [UnityTest]
+        public IEnumerator MatchSquaredSpecialMechanicTest()
+        {
+            // mocks a new level
+            LevelData _match4LevelData = ScriptableObject.CreateInstance<LevelData>();
+            _match4LevelData.LevelBoardSize = 10;
+            _match4LevelData.PowerupChance = 100;
+            _match4LevelData.LevelMechanic = LevelMechanic.MatchSquared;
+            _match4LevelData.LevelMaxMovements = 100;
+            _match4LevelData.LevelTargetPoints = 100;
+            _match4LevelData.TileSpecialActions = new List<TileSpecialAction> { };
+            _match4LevelData.TileTypes = new List<int> { 3, 4, 5, 6 };
+
+            // mocks the controller
+            _gameController.GameLevelsData.Add(_match4LevelData);
+            _gameController.BoardView = _boardView;
+            _gameController.SetupGameForNextLevel();
+
+            yield return new WaitUntil(() => !_gameController.IsLevelComplete);
+            yield return new WaitForSeconds(2f);
+
+            _gameController.GameEngine.BoardTiles[1][2].Type = 1;
+            _gameController.GameEngine.BoardTiles[1][3].Type = 1;
+            _gameController.GameEngine.BoardTiles[2][2].Type = 2;
+            _gameController.GameEngine.BoardTiles[2][3].Type = 1;
+
+            _gameController.GameEngine.BoardTiles[2][1].Type = 1;
+
+            _gameController.OnTileClick(1, 2);
+            _gameController.OnTileClick(2, 2);
+
+            yield return new WaitUntil(() => !_gameController.IsAnimating);
+            yield return null;
+
+            int matches = 0;
+            for (int i = 0; i < _levelData.LevelBoardSize; i++)
+            {
+                for (int o = 0; o < _levelData.LevelBoardSize; o++)
+                {
+                    if (_gameController.GameEngine.MatchedTilesPosition[i][o] == true)
+                    {
+                        matches++;
+                    }
+                }
+            }
+
+            Assert.IsTrue(matches >= 4);
+        }
     }
 }
