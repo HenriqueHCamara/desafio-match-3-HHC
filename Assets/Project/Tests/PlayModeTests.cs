@@ -74,7 +74,7 @@ namespace Gazeus.DesafioMatch3.Test
         {
             // Test the generation
             LevelData generatedLevelData = _gameController.GenerateRandomLevel();
-            yield return new WaitForSeconds(.1f);
+            yield return null;
 
             // Assert that the level SO was successfuly created.
             Assert.AreNotEqual(null, generatedLevelData);
@@ -144,6 +144,41 @@ namespace Gazeus.DesafioMatch3.Test
             }
 
             Assert.IsTrue(matches >= 9);
+        }
+
+        [UnityTest]
+        public IEnumerator TrapSpecialActionTest()
+        {
+            int currentPlayerLives = _playerData.CurrentPlayerLives;
+
+            _gameController.GameEngine.BoardTiles[1][2].Type = 1;
+            _gameController.GameEngine.BoardTiles[2][2].Type = 2;
+            _gameController.GameEngine.BoardTiles[3][2].Type = 1;
+
+            _gameController.GameEngine.BoardTiles[2][1].Type = 1;
+
+            _gameController.GameEngine.BoardTiles[2][1].Action = TileSpecialAction.Death;
+            _gameController.GameEngine.BoardTiles[2][2].Action = TileSpecialAction.Death;
+
+            _gameController.OnTileClick(1, 2);
+            _gameController.OnTileClick(2, 2);
+
+            yield return new WaitUntil(() => !_gameController.IsAnimating);
+            yield return null;
+
+            int matches = 0;
+            for (int i = 0; i < _levelData.LevelBoardSize; i++)
+            {
+                for (int o = 0; o < _levelData.LevelBoardSize; o++)
+                {
+                    if (_gameController.GameEngine.MatchedSpecialTilesPosition[i][o] == true)
+                    {
+                        matches++;
+                    }
+                }
+            }
+
+            Assert.IsTrue(_playerData.CurrentPlayerLives < currentPlayerLives);
         }
 
         [UnityTest]
