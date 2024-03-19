@@ -1,4 +1,5 @@
 Link para o download do jogo no Itch.io: https://misterzedman.itch.io/gmatch3
+(Obs: formato da tela deve ser 16:9)
 
 Features:
 - Pontuação com Highscore salvo entre jogos.
