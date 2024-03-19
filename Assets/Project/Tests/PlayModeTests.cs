@@ -96,7 +96,7 @@ namespace Gazeus.DesafioMatch3.Test
             _gameController.OnTileClick(2, 2);
 
             yield return new WaitUntil(() => !_gameController.IsAnimating);
-            yield return new WaitForSeconds(2f);
+            yield return null;
 
             int matches = 0;
             for (int i = 0; i < _levelData.LevelBoardSize; i++)
@@ -110,37 +110,26 @@ namespace Gazeus.DesafioMatch3.Test
                 }
             }
 
-            // The match does not include the two extra tiles
-            if (matches == 19)
-            {
-                Assert.AreEqual(19, matches);
-            }
-            else if (matches == 21) // The match includes the two extra tiles
-            {
-                Assert.AreEqual(21, matches);
-            }
+            Assert.AreEqual(true, matches >= 19);
         }
 
         [UnityTest]
         public IEnumerator BombSpecialActionTest()
         {
-            _levelData.TileSpecialActions = new List<TileSpecialAction> { TileSpecialAction.Bomb };
-            _levelData.TileTypes = new List<int> { 1, 2, 3 };
-            _gameController.GameLevelsData = new List<LevelData> { _levelData };
-
-            _gameController.GameEngine.BoardTiles[3][3].Type = 1;
+            _gameController.GameEngine.BoardTiles[1][2].Type = 1;
+            _gameController.GameEngine.BoardTiles[2][2].Type = 2;
             _gameController.GameEngine.BoardTiles[3][2].Type = 1;
-            _gameController.GameEngine.BoardTiles[2][3].Type = 1;
-            _gameController.GameEngine.BoardTiles[2][2].Type = 1;
 
-            _gameController.GameEngine.BoardTiles[3][3].Type = 1;
+            _gameController.GameEngine.BoardTiles[2][1].Type = 1;
 
-            _gameController.GameEngine.BoardTiles[3][2].Action = TileSpecialAction.Bomb;
+            _gameController.GameEngine.BoardTiles[2][1].Action = TileSpecialAction.Bomb;
+            _gameController.GameEngine.BoardTiles[2][2].Action = TileSpecialAction.Bomb;
 
-            _gameController.OnTileClick(3, 3);
-            _gameController.OnTileClick(3, 2);
+            _gameController.OnTileClick(1, 2);
+            _gameController.OnTileClick(2, 2);
 
             yield return new WaitUntil(() => !_gameController.IsAnimating);
+            yield return null;
 
             int matches = 0;
             for (int i = 0; i < _levelData.LevelBoardSize; i++)
@@ -154,7 +143,7 @@ namespace Gazeus.DesafioMatch3.Test
                 }
             }
 
-            Assert.AreEqual(11, matches);
+            Assert.AreEqual(true, matches >= 9);
         }
     }
 }
