@@ -145,5 +145,44 @@ namespace Gazeus.DesafioMatch3.Test
 
             Assert.AreEqual(true, matches >= 9);
         }
+
+        [UnityTest]
+        public IEnumerator ColorClearSpecialActionTest() 
+        {
+            _gameController.GameEngine.BoardTiles[1][2].Type = 1;
+            _gameController.GameEngine.BoardTiles[2][2].Type = 2;
+            _gameController.GameEngine.BoardTiles[3][2].Type = 1;
+
+            _gameController.GameEngine.BoardTiles[2][1].Type = 1;
+
+            _gameController.GameEngine.BoardTiles[2][1].Action = TileSpecialAction.ColorClear;
+            _gameController.GameEngine.BoardTiles[2][2].Action = TileSpecialAction.ColorClear;
+
+            _gameController.GameEngine.BoardTiles[6][6].Type = 1;
+            _gameController.GameEngine.BoardTiles[6][7].Type = 1;
+            _gameController.GameEngine.BoardTiles[6][8].Type = 1;
+            _gameController.GameEngine.BoardTiles[6][9].Type = 1;
+
+
+            _gameController.OnTileClick(1, 2);
+            _gameController.OnTileClick(2, 2);
+
+            yield return new WaitUntil(() => !_gameController.IsAnimating);
+            yield return null;
+
+            int matches = 0;
+            for (int i = 0; i < _levelData.LevelBoardSize; i++)
+            {
+                for (int o = 0; o < _levelData.LevelBoardSize; o++)
+                {
+                    if (_gameController.GameEngine.MatchedSpecialTilesPosition[i][o] == true)
+                    {
+                        matches++;
+                    }
+                }
+            }
+
+            Assert.AreEqual(true, matches >= 7);
+        }
     }
 }
