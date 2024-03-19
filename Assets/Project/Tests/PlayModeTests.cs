@@ -253,7 +253,6 @@ namespace Gazeus.DesafioMatch3.Test
 
             // mocks the controller
             _gameController.GameLevelsData.Add(_match4LevelData);
-            _gameController.BoardView = _boardView;
             _gameController.SetupGameForNextLevel();
 
             yield return new WaitUntil(() => !_gameController.IsLevelComplete);
@@ -302,7 +301,6 @@ namespace Gazeus.DesafioMatch3.Test
 
             // mocks the controller
             _gameController.GameLevelsData.Add(_match4LevelData);
-            _gameController.BoardView = _boardView;
             _gameController.SetupGameForNextLevel();
 
             yield return new WaitUntil(() => !_gameController.IsLevelComplete);
@@ -334,6 +332,29 @@ namespace Gazeus.DesafioMatch3.Test
             }
 
             Assert.IsTrue(matches >= 4);
+        }
+
+        [UnityTest]
+        public IEnumerator CompleteCurrentLevelAndGoToNextLevelTest() 
+        {
+            // mocks a new level
+            LevelData _match4LevelData = ScriptableObject.CreateInstance<LevelData>();
+            _match4LevelData.LevelBoardSize = 10;
+            _match4LevelData.PowerupChance = 100;
+            _match4LevelData.LevelMechanic = LevelMechanic.MatchSquared;
+            _match4LevelData.LevelMaxMovements = 100;
+            _match4LevelData.LevelTargetPoints = 100;
+            _match4LevelData.TileSpecialActions = new List<TileSpecialAction> { };
+            _match4LevelData.TileTypes = new List<int> { 3, 4, 5, 6 };
+
+            // mocks the controller
+            _gameController.GameLevelsData.Add(_match4LevelData);
+            _gameController.SetupGameForNextLevel();
+
+            yield return new WaitUntil(() => !_gameController.IsLevelComplete);
+            yield return new WaitForSeconds(2f);
+
+            Assert.AreNotEqual(_gameController.GameEngine.CurrentLevelData, _gameController.GameLevelsData[0]);
         }
     }
 }

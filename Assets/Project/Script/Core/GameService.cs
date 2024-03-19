@@ -22,6 +22,7 @@ namespace Gazeus.DesafioMatch3.Core
         public List<List<Tile>> BoardTiles { get => _boardTiles; set => _boardTiles = value; }
         public TileSpecialAction SpecialActionToExecute { get => _specialActionToExecute; set => _specialActionToExecute = value; }
         public List<List<bool>> MatchedTilesPosition { get => _matchedTilesPosition; set => _matchedTilesPosition = value; }
+        public LevelData CurrentLevelData { get => _currentLevelData; set => _currentLevelData = value; }
 
         public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
         {
