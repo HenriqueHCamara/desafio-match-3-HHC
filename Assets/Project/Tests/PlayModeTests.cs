@@ -110,7 +110,7 @@ namespace Gazeus.DesafioMatch3.Test
                 }
             }
 
-            Assert.AreEqual(true, matches >= 19);
+            Assert.IsTrue(matches >= 19);
         }
 
         [UnityTest]
@@ -143,7 +143,7 @@ namespace Gazeus.DesafioMatch3.Test
                 }
             }
 
-            Assert.AreEqual(true, matches >= 9);
+            Assert.IsTrue(matches >= 9);
         }
 
         [UnityTest]
@@ -182,7 +182,25 @@ namespace Gazeus.DesafioMatch3.Test
                 }
             }
 
-            Assert.AreEqual(true, matches >= 7);
+            Assert.IsTrue(matches >= 7);
+        }
+
+        [UnityTest]
+        public IEnumerator GivePlayerScorePointsAfterMatch() 
+        {
+            _gameController.GameEngine.BoardTiles[1][2].Type = 1;
+            _gameController.GameEngine.BoardTiles[2][2].Type = 2;
+            _gameController.GameEngine.BoardTiles[3][2].Type = 1;
+
+            _gameController.GameEngine.BoardTiles[2][1].Type = 1;
+
+            _gameController.OnTileClick(1, 2);
+            _gameController.OnTileClick(2, 2);
+
+            yield return new WaitUntil(() => !_gameController.IsAnimating);
+            yield return null;
+
+            Assert.IsTrue(_playerData.CurrentPlayerScore > 0);
         }
     }
 }
