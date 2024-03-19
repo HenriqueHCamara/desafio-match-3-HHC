@@ -17,6 +17,11 @@ namespace Gazeus.DesafioMatch3.Core
 
         private int _SpecialPowerupChance = 46; // The chance for special Tiles to appear
         private LevelData _currentLevelData;
+        private List<List<bool>> _matchedSpecialTilesPosition = new List<List<bool>>();
+
+        public List<List<Tile>> BoardTiles { get => _boardTiles; set => _boardTiles = value; }
+        public TileSpecialAction SpecialActionToExecute { get => _specialActionToExecute; set => _specialActionToExecute = value; }
+        public List<List<bool>> MatchedSpecialTilesPosition { get => _matchedSpecialTilesPosition; set => _matchedSpecialTilesPosition = value; }
 
         public bool IsValidMovement(int fromX, int fromY, int toX, int toY)
         {
@@ -122,7 +127,6 @@ namespace Gazeus.DesafioMatch3.Core
             SetSpecialAction(newBoard, matchedTiles, fromX, fromY); // We check twice to see if the special tile was the selected tile 
             SetSpecialAction(newBoard, matchedTiles, toX, toY); // or the swaped tile
 
-
             /// Here we treat the special action that involve Tiles manipulation
             if (_specialActionToExecute != TileSpecialAction.None)
             {
@@ -176,6 +180,8 @@ namespace Gazeus.DesafioMatch3.Core
                         onSpecialTileDeathEvent.Invoke();
                         break;
                 }
+
+                MatchedSpecialTilesPosition = matchedTiles;
 
                 _specialActionToExecute = TileSpecialAction.None;
             }

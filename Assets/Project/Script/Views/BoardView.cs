@@ -25,6 +25,8 @@ namespace Gazeus.DesafioMatch3.Views
         public GridLayoutGroup BoardContainer { get => _boardContainer; set => _boardContainer = value; }
         public TilePrefabRepository TilePrefabRepository { get => _tilePrefabRepository; set => _tilePrefabRepository = value; }
         public TileSpotView TileSpotPrefab { get => _tileSpotPrefab; set => _tileSpotPrefab = value; }
+        public GameObject[][] Tiles { get => _tiles; set => _tiles = value; }
+        public TileSpotView[][] TileSpots { get => _tileSpots; set => _tileSpots = value; }
 
         public void CreateBoard(List<List<Tile>> board)
         {
@@ -87,7 +89,7 @@ namespace Gazeus.DesafioMatch3.Views
 
                 GameObject tilePrefab = _tilePrefabRepository.TileTypePrefabList[addedTileInfo.Type];
                 GameObject tile = Instantiate(tilePrefab);
-                tile.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = _tilePrefabRepository.TileSpecialImagePrefabList[(int)addedTileInfo.SpecialAction];
+                if (tile.transform.childCount > 0) tile.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = _tilePrefabRepository.TileSpecialImagePrefabList[(int)addedTileInfo.SpecialAction];
 
                 tileSpot.SetTile(tile);
 
@@ -107,7 +109,8 @@ namespace Gazeus.DesafioMatch3.Views
             for (int i = 0; i < matchedPosition.Count; i++)
             {
                 Vector2Int position = matchedPosition[i];
-                _tileSpots[position.y][position.x].transform.GetChild(0).GetComponent<Animator>().SetTrigger("Explode");
+                if (_tileSpots[position.y][position.x].transform.childCount > 0)
+                    _tileSpots[position.y][position.x].transform.GetChild(0).GetComponent<Animator>().SetTrigger("Explode");
 
                 _tiles[position.y][position.x].transform.localScale = Vector2.one;
                 GameObject tileToDestroy = _tiles[position.y][position.x];

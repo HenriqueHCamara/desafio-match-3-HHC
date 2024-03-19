@@ -33,6 +33,8 @@ namespace Gazeus.DesafioMatch3.Controllers
 
         public List<LevelData> GameLevelsData { get => _gameLevelsData; set => _gameLevelsData = value; }
         public BoardView BoardView { get => _boardView; set => _boardView = value; }
+        public GameService GameEngine { get => _gameEngine; set => _gameEngine = value; }
+        public PlayerData PlayerData { get => _playerData; set => _playerData = value; }
 
         #region Unity
         private void Awake()
